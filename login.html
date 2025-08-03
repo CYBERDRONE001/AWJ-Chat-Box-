@@ -16,36 +16,33 @@
 
 <p class="text-xs text-gray-500 mt-4">By continuing, you agree to our <a href="#" class="underline">Terms</a> and <a href="#" class="underline">Privacy Policy</a>.</p>
 
-  </div>  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCNeOEkslQ6F4DAdd3usVbhDBCbkEDwexg",
-      authDomain: "awjchatbox.netlify.app",
-      projectId: "awj-chat-box",
-      storageBucket: "awj-chat-box.appspot.com",
-      messagingSenderId: "613683528897",
-      appId: "1:613683528897:web:3585629325f88de6184040",
-      measurementId: "G-VZS2YMNJ0M"
-    };
+  </div>  <!-- Add this inside a <script> tag -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+  const firebaseConfig = {
+    apiKey: "AIzaSyCNeOEkslQ6F4DAdd3usVbhDBCbkEDwexg",
+    authDomain: "awjchatbox.netlify.app",
+    projectId: "awj-chat-box",
+    storageBucket: "awj-chat-box.appspot.com",
+    messagingSenderId: "613683528897",
+    appId: "1:613683528897:web:3585629325f88de6184040",
+    measurementId: "G-VZS2YMNJ0M"
+  };
 
-    function signInWithGoogle() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider)
-        .then(result => {
-          window.location.href = "home.html";
-        })
-        .catch(error => alert(error.message));
-    }
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
-    function redirectToFacebookLogin() {
-      const provider = new firebase.auth.FacebookAuthProvider();
-      auth.signInWithPopup(provider)
-        .then(result => {
-          window.location.href = "home.html";
-        })
-        .catch(error => alert(error.message));
-    }
-  </script></body>
+  document.getElementById("googleBtn").addEventListener("click", () => {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        window.location.href = "home.html"; // or chat.html
+      })
+      .catch((error) => {
+        alert("Login failed: " + error.message);
+      });
+  });
+</script>
 </html>
