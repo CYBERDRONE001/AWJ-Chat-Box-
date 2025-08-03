@@ -4,8 +4,50 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AWJ Chatbox Login</title>
-  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth.js"></script>
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-auth.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCNeOEkslQ6F4DAdd3usVbhDBCbkEDwexg",
+      authDomain: "awj-chat-box.firebaseapp.com",
+      projectId: "awj-chat-box",
+      storageBucket: "awj-chat-box.appspot.com",
+      messagingSenderId: "613683528897",
+      appId: "1:613683528897:web:3585629325f88de6184040",
+      measurementId: "G-VZS2YMNJ0M"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Login functions
+    window.loginWithGoogle = async () => {
+      try {
+        const provider = new GoogleAuthProvider();
+        const result = await signInWithPopup(auth, provider);
+        localStorage.setItem("user", JSON.stringify(result.user));
+        window.location.href = "chat.html";
+      } catch (error) {
+        alert("Google login failed: " + error.message);
+      }
+    };
+
+    window.loginWithFacebook = async () => {
+      try {
+        const provider = new FacebookAuthProvider();
+        const result = await signInWithPopup(auth, provider);
+        localStorage.setItem("user", JSON.stringify(result.user));
+        window.location.href = "chat.html";
+      } catch (error) {
+        alert("Facebook login failed: " + error.message);
+      }
+    };
+  </script>
+
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Twitter+Chirp&display=swap">
   <style>
     body {
@@ -57,60 +99,9 @@
   <button onclick="loginWithFacebook()">Login with Facebook</button>
 
   <div class="desc">
-    By continuing, you agree to our Terms of Service and Privacy Policy.
+    By continuing, you agree to our Terms of Service and Privacy Policy.<br>
     Enjoy chatting, gaming, and smart AI support in a secure and fun environment. 🌐🧠🎮
   </div>
-
-  <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyCNeOEkslQ6F4DAdd3usVbhDBCbkEDwexg",
-      authDomain: "awj-chat-box.firebaseapp.com",
-      projectId: "awj-chat-box",
-      storageBucket: "awj-chat-box.appspot.com",
-      messagingSenderId: "613683528897",
-      appId: "1:613683528897:web:3585629325f88de6184040",
-      measurementId: "G-VZS2YMNJ0M"
-    };
-
-    // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    function loginWithGoogle() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider)
-        .then((result) => {
-          if (result.user) {
-            localStorage.setItem("user", JSON.stringify(result.user));
-            window.location.href = "chat.html";
-          } else {
-            alert("Login failed: No user returned.");
-          }
-        })
-        .catch((error) => {
-          console.error("Google Login Error:", error.message);
-          alert("Google login failed: " + error.message);
-        });
-    }
-
-    function loginWithFacebook() {
-      const provider = new firebase.auth.FacebookAuthProvider();
-      auth.signInWithPopup(provider)
-        .then((result) => {
-          if (result.user) {
-            localStorage.setItem("user", JSON.stringify(result.user));
-            window.location.href = "chat.html";
-          } else {
-            alert("Login failed: No user returned.");
-          }
-        })
-        .catch((error) => {
-          console.error("Facebook Login Error:", error.message);
-          alert("Facebook login failed: " + error.message);
-        });
-    }
-  </script>
 
 </body>
 </html>
