@@ -1,48 +1,92 @@
-<!DOCTYPE html><html lang="en" class="dark">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login | AWJ ChatBox</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AWJ Chat Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Chirp&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: 'Chirp', Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      margin-bottom: 2rem;
+      font-size: 2rem;
+    }
+    button {
+      background-color: #1DA1F2;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      margin: 10px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background-color: #0d8ddb;
+    }
+    .ads {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: gray;
+    }
+  </style>
 </head>
-<body class="bg-black text-white font-sans flex items-center justify-center min-h-screen">
-  <div class="text-center space-y-4 p-6 rounded-xl bg-gray-900 border border-gray-800 w-full max-w-sm">
-    <h1 class="text-2xl font-bold">AWJ ChatBox</h1>
-    <p class="text-gray-400">Connect your account to begin</p><button onclick="signInWithGoogle()" class="bg-blue-500 hover:bg-blue-600 w-full py-2 rounded-xl">Continue with Google</button>
-<button onclick="redirectToFacebookLogin()" class="bg-blue-700 hover:bg-blue-800 w-full py-2 rounded-xl">Continue with Facebook</button>
-<a href="https://wa.me/2348100000000?text=Hi%2C%20I%20want%20to%20link%20AWJ%20ChatBox%20to%20my%20WhatsApp%20account." target="_blank" class="block bg-green-600 hover:bg-green-700 w-full py-2 rounded-xl text-center">Link via WhatsApp</a>
+<body>
 
-<p class="text-xs text-gray-500 mt-4">By continuing, you agree to our <a href="#" class="underline">Terms</a> and <a href="#" class="underline">Privacy Policy</a>.</p>
+  <h1>Welcome to AWJ Chat</h1>
+  <button id="googleBtn">Login with Google</button>
+  <button onclick="linkWhatsApp()">Link WhatsApp</button>
 
-  </div>  <!-- Add this inside a <script> tag -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  <div class="ads">
+    🚨 Ads are shown because you're on a free plan.
+  </div>
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCNeOEkslQ6F4DAdd3usVbhDBCbkEDwexg",
-    authDomain: "awjchatbox.netlify.app",
-    projectId: "awj-chat-box",
-    storageBucket: "awj-chat-box.appspot.com",
-    messagingSenderId: "613683528897",
-    appId: "1:613683528897:web:3585629325f88de6184040",
-    measurementId: "G-VZS2YMNJ0M"
-  };
+  <!-- Firebase Scripts -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+    const firebaseConfig = {
+      apiKey: "AIzaSyCNeOEkslQ6F4DAdd3usVbhDBCbkEDwexg",
+      authDomain: "awjchatbox.netlify.app",
+      projectId: "awj-chat-box",
+      storageBucket: "awj-chat-box.appspot.com",
+      messagingSenderId: "613683528897",
+      appId: "1:613683528897:web:3585629325f88de6184040",
+      measurementId: "G-VZS2YMNJ0M"
+    };
 
-  document.getElementById("googleBtn").addEventListener("click", () => {
-    const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        window.location.href = "home.html"; // or chat.html
-      })
-      .catch((error) => {
-        alert("Login failed: " + error.message);
-      });
-  });
-</script>
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.getElementById("googleBtn").addEventListener("click", () => {
+      const provider = new GoogleAuthProvider();
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          // Optional: Store user info or check Firestore
+          window.location.href = "chat.html"; // ✅ Redirect to chat after login
+        })
+        .catch((error) => {
+          alert("Google login failed: " + error.message);
+        });
+    });
+
+    window.linkWhatsApp = () => {
+      const message = encodeURIComponent("I want to link my WhatsApp account with AWJ Chat.");
+      const phoneNumber = "2347043934781"; // Replace with your admin WhatsApp
+      window.location.href = `https://wa.me/${phoneNumber}?text=${message}`;
+    };
+  </script>
+</body>
 </html>
