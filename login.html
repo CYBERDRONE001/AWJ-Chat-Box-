@@ -2,77 +2,67 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AWJ Chatbox - Login</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AWJ Chatbox Login</title>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Twitter+Chirp&display=swap">
   <style>
     body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background-color: #0d0d0d;
+      font-family: 'Chirp', sans-serif;
+      background-color: #0a0a0a;
       color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
-    }
-    .container {
+      margin: 0;
       text-align: center;
-      padding: 2rem;
-      border-radius: 20px;
-      background: #1a1a1a;
-      box-shadow: 0 0 12px rgba(0,0,0,0.4);
-      max-width: 400px;
     }
     h1 {
       font-size: 2rem;
       margin-bottom: 0.5rem;
     }
-    p.description {
-      color: #ccc;
+    p {
+      color: #aaa;
       margin-bottom: 2rem;
+      max-width: 90%;
     }
-    .login-btn {
-      width: 100%;
-      margin: 10px 0;
-      padding: 12px;
+    button {
+      padding: 12px 20px;
+      margin: 10px;
+      font-size: 16px;
       border: none;
       border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
       cursor: pointer;
-      transition: background 0.3s ease;
+      background: #1da1f2;
+      color: white;
+      width: 250px;
     }
-    .google {
-      background-color: #fff;
-      color: #000;
-    }
-    .facebook {
-      background-color: #1877f2;
-      color: #fff;
-    }
-    .login-btn:hover {
-      opacity: 0.9;
+    .desc {
+      margin-top: 40px;
+      font-size: 14px;
+      color: #888;
+      max-width: 400px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>AWJ Chatbox</h1>
-    <p class="description">
-      Chat with friends, play games like Ludo and Aviator, unlock premium features, enjoy dark mode — all in one place!
-    </p>
-    <button class="login-btn google" onclick="loginWithGoogle()">Login with Google</button>
-    <button class="login-btn facebook" onclick="loginWithFacebook()">Login with Facebook</button>
+
+  <h1>Welcome to AWJ Chatbox 💬</h1>
+  <p>Chat with friends, play games, explore AI tools & upgrade to premium – all in one place!</p>
+
+  <button onclick="loginWithGoogle()">Login with Google</button>
+  <button onclick="loginWithFacebook()">Login with Facebook</button>
+
+  <div class="desc">
+    By continuing, you agree to our Terms of Service and Privacy Policy.
+    Enjoy chatting, gaming, and smart AI support in a secure and fun environment. 🌐🧠🎮
   </div>
 
-  <script type="module">
-    // Firebase imports
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, FacebookAuthProvider, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
+  <script>
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyCNeOEkslQ6F4DAdd3usVbhDBCbkEDwexg",
       authDomain: "awj-chat-box.firebaseapp.com",
@@ -83,29 +73,44 @@
       measurementId: "G-VZS2YMNJ0M"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
-    const googleProvider = new GoogleAuthProvider();
-    const facebookProvider = new FacebookAuthProvider();
+    function loginWithGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then((result) => {
+          if (result.user) {
+            localStorage.setItem("user", JSON.stringify(result.user));
+            window.location.href = "chat.html";
+          } else {
+            alert("Login failed: No user returned.");
+          }
+        })
+        .catch((error) => {
+          console.error("Google Login Error:", error.message);
+          alert("Google login failed: " + error.message);
+        });
+    }
 
-    window.loginWithGoogle = () => {
-      signInWithRedirect(auth, googleProvider);
-    };
-
-    window.loginWithFacebook = () => {
-      signInWithRedirect(auth, facebookProvider);
-    };
-
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result.user) {
-          window.location.href = "chat.html"; // redirect after login
-        }
-      })
-      .catch((error) => {
-        console.error("Redirect error:", error.message);
-      });
+    function loginWithFacebook() {
+      const provider = new firebase.auth.FacebookAuthProvider();
+      auth.signInWithPopup(provider)
+        .then((result) => {
+          if (result.user) {
+            localStorage.setItem("user", JSON.stringify(result.user));
+            window.location.href = "chat.html";
+          } else {
+            alert("Login failed: No user returned.");
+          }
+        })
+        .catch((error) => {
+          console.error("Facebook Login Error:", error.message);
+          alert("Facebook login failed: " + error.message);
+        });
+    }
   </script>
+
 </body>
 </html>
