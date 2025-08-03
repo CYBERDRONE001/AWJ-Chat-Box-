@@ -1,0 +1,80 @@
+<!DOCTYPE html><html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile | AWJ ChatBox</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-black text-white font-sans">
+  <header class="p-4 bg-gray-900 border-b border-gray-800 flex justify-between items-center">
+    <h1 class="text-lg font-bold">👤 Profile</h1>
+    <a href="home.html" class="text-blue-400">⬅️ Home</a>
+  </header>  <main class="p-6 max-w-md mx-auto">
+    <div class="bg-gray-800 rounded-xl p-6 text-center">
+      <img id="userPic" class="w-20 h-20 rounded-full mx-auto mb-4 border-2 border-blue-500" src="" alt="Profile Picture">
+      <h2 id="userName" class="text-xl font-bold">User</h2>
+      <p id="userEmail" class="text-sm text-gray-400">email@example.com</p>
+      <p id="userStatus" class="text-green-400 mt-2">🎖️ Free Plan</p>
+      <p id="joinDate" class="text-xs text-gray-500 mt-1">Joined: --</p><div class="mt-4">
+    <button onclick="logout()" class="bg-red-600 px-4 py-1 rounded hover:bg-red-700">Logout</button>
+  </div>
+</div>
+
+<div class="mt-6 bg-gray-900 p-4 rounded-lg">
+  <h3 class="text-lg font-bold mb-2">📊 Stats</h3>
+  <ul class="text-sm space-y-1">
+    <li>💬 Chats sent: <span id="chatCount">0</span></li>
+    <li>🎮 Games played: <span id="gameCount">0</span></li>
+  </ul>
+</div>
+
+  </main>  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCNeOEkslQ6F4DAdd3usVbhDBCbkEDwexg",
+      authDomain: "awj-chat-box.firebaseapp.com",
+      projectId: "awj-chat-box",
+      storageBucket: "awj-chat-box.appspot.com",
+      messagingSenderId: "613683528897",
+      appId: "1:613683528897:web:3585629325f88de6184040",
+      measurementId: "G-VZS2YMNJ0M"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    auth.onAuthStateChanged(user => {
+      if (!user) return (window.location.href = "login.html");
+
+      document.getElementById("userName").innerText = user.displayName || "Anonymous";
+      document.getElementById("userEmail").innerText = user.email;
+      document.getElementById("userPic").src = user.photoURL || "https://www.gravatar.com/avatar?d=mp";
+      document.getElementById("joinDate").innerText = `Joined: ${new Date(user.metadata.creationTime).toLocaleDateString()}`;
+
+      // Check premium
+      db.collection("premiumUsers").doc(user.uid).get().then(doc => {
+        if (doc.exists) {
+          document.getElementById("userStatus").innerText = "🌟 Premium Plan";
+          document.getElementById("userStatus").classList.remove("text-green-400");
+          document.getElementById("userStatus").classList.add("text-yellow-400");
+        }
+      });
+
+      // Load stats
+      db.collection("stats").doc(user.uid).get().then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          document.getElementById("chatCount").innerText = data.chats || 0;
+          document.getElementById("gameCount").innerText = data.games || 0;
+        }
+      });
+    });
+
+    function logout() {
+      auth.signOut().then(() => location.href = "login.html");
+    }
+  </script></body>
+</html>

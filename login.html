@@ -1,0 +1,51 @@
+<!DOCTYPE html><html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | AWJ ChatBox</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+</head>
+<body class="bg-black text-white font-sans flex items-center justify-center min-h-screen">
+  <div class="text-center space-y-4 p-6 rounded-xl bg-gray-900 border border-gray-800 w-full max-w-sm">
+    <h1 class="text-2xl font-bold">AWJ ChatBox</h1>
+    <p class="text-gray-400">Connect your account to begin</p><button onclick="signInWithGoogle()" class="bg-blue-500 hover:bg-blue-600 w-full py-2 rounded-xl">Continue with Google</button>
+<button onclick="redirectToFacebookLogin()" class="bg-blue-700 hover:bg-blue-800 w-full py-2 rounded-xl">Continue with Facebook</button>
+<a href="https://wa.me/2348100000000?text=Hi%2C%20I%20want%20to%20link%20AWJ%20ChatBox%20to%20my%20WhatsApp%20account." target="_blank" class="block bg-green-600 hover:bg-green-700 w-full py-2 rounded-xl text-center">Link via WhatsApp</a>
+
+<p class="text-xs text-gray-500 mt-4">By continuing, you agree to our <a href="#" class="underline">Terms</a> and <a href="#" class="underline">Privacy Policy</a>.</p>
+
+  </div>  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCNeOEkslQ6F4DAdd3usVbhDBCbkEDwexg",
+      authDomain: "awj-chat-box.firebaseapp.com",
+      projectId: "awj-chat-box",
+      storageBucket: "awj-chat-box.appspot.com",
+      messagingSenderId: "613683528897",
+      appId: "1:613683528897:web:3585629325f88de6184040",
+      measurementId: "G-VZS2YMNJ0M"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    function signInWithGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then(result => {
+          window.location.href = "home.html";
+        })
+        .catch(error => alert(error.message));
+    }
+
+    function redirectToFacebookLogin() {
+      const provider = new firebase.auth.FacebookAuthProvider();
+      auth.signInWithPopup(provider)
+        .then(result => {
+          window.location.href = "home.html";
+        })
+        .catch(error => alert(error.message));
+    }
+  </script></body>
+</html>

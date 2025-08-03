@@ -1,0 +1,74 @@
+<!DOCTYPE html><html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upgrade to Premium | AWJ ChatBox</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-black text-white font-sans">
+  <div class="p-4 bg-gray-900 text-center border-b border-gray-800">
+    <h1 class="text-xl font-bold">Upgrade to Premium 🌟</h1>
+    <p class="text-sm text-gray-400 mt-1">Get ad-free experience, exclusive games and features!</p>
+  </div>  <main class="p-6 max-w-md mx-auto text-center">
+    <div class="bg-gray-800 p-6 rounded-xl">
+      <p class="text-lg mb-4">Unlock premium for just <strong>₦1500</strong></p>
+      <button onclick="payWithPaystack()" class="bg-yellow-500 hover:bg-yellow-600 px-6 py-2 rounded text-black font-bold">Upgrade Now</button>
+    </div><div class="mt-8 text-sm text-gray-500">
+  <p>Premium includes:</p>
+  <ul class="list-disc mt-2 list-inside">
+    <li>No ads</li>
+    <li>Access to all games</li>
+    <li>Priority support & AI tools</li>
+    <li>Early access to features</li>
+  </ul>
+</div>
+
+  </main>  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCNeOEkslQ6F4DAdd3usVbhDBCbkEDwexg",
+      authDomain: "awj-chat-box.firebaseapp.com",
+      projectId: "awj-chat-box",
+      storageBucket: "awj-chat-box.appspot.com",
+      messagingSenderId: "613683528897",
+      appId: "1:613683528897:web:3585629325f88de6184040",
+      measurementId: "G-VZS2YMNJ0M"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    function payWithPaystack() {
+      auth.onAuthStateChanged(user => {
+        if (!user) return alert("Please log in first.");
+
+        let handler = PaystackPop.setup({
+          key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxx', // Replace with your live key
+          email: user.email,
+          amount: 150000, // kobo
+          currency: 'NGN',
+          ref: 'AWJ-' + Math.floor((Math.random() * 1000000000) + 1),
+          callback: function(response) {
+            db.collection("premiumUsers").doc(user.uid).set({
+              email: user.email,
+              name: user.displayName || 'User',
+              upgradedAt: firebase.firestore.FieldValue.serverTimestamp(),
+              ref: response.reference
+            }).then(() => {
+              alert("✅ Upgrade successful! Welcome to Premium.");
+              window.location.href = "profile.html";
+            });
+          },
+          onClose: function() {
+            alert('Transaction cancelled');
+          }
+        });
+        handler.openIframe();
+      });
+    }
+  </script></body>
+</html>

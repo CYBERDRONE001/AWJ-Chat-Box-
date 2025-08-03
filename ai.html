@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWJ ChatBox - AI Assistant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white font-sans flex flex-col min-h-screen">
+  <!-- Header -->
+  <header class="bg-gray-900 p-4 border-b border-gray-700 flex justify-between items-center">
+    <h1 class="text-xl font-bold">🤖 AI Assistant</h1>
+    <a href="index.html" class="text-blue-500 text-sm">← Back</a>
+  </header>  <!-- Chat Container -->  <main class="flex-1 p-4 overflow-y-auto" id="chat-box">
+    <div class="text-center text-gray-400 mb-4">Ask me anything!</div>
+  </main>  <!-- Input Area -->  <footer class="p-4 bg-gray-800 border-t border-gray-700">
+    <form id="ai-form" class="flex items-center gap-2">
+      <input id="user-input" type="text" placeholder="Type your question..." required class="flex-1 px-4 py-2 bg-gray-900 rounded border border-gray-700 text-white focus:outline-none">
+      <button class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">Send</button>
+    </form>
+  </footer>  <!-- AI Script -->  <script>
+    const chatBox = document.getElementById("chat-box");
+    const form = document.getElementById("ai-form");
+    const input = document.getElementById("user-input");
+
+    const appendMessage = (sender, text) => {
+      const bubble = document.createElement("div");
+      bubble.className = `my-2 p-3 rounded max-w-xl ${sender === 'user' ? 'bg-blue-600 ml-auto' : 'bg-gray-700 mr-auto'}`;
+      bubble.innerText = text;
+      chatBox.appendChild(bubble);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    };
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const question = input.value.trim();
+      if (!question) return;
+      appendMessage("user", question);
+      input.value = "";
+      appendMessage("ai", "Thinking...");
+
+      try {
+        const res = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer sk-REPLACE_WITH_YOUR_KEY"
+          },
+          body: JSON.stringify({
+            model: "gpt-3.5-turbo",
+            messages: [{ role: "user", content: question }],
+            max_tokens: 150
+          })
+        });
+        const data = await res.json();
+        document.querySelectorAll("#chat-box .bg-gray-700").at(-1).remove();
+        appendMessage("ai", data.choices?.[0]?.message?.content?.trim() || "Sorry, I didn't understand that.");
+      } catch (err) {
+        document.querySelectorAll("#chat-box .bg-gray-700").at(-1).remove();
+        appendMessage("ai", "❌ Error reaching AI.");
+      }
+    }
+  </script></body>
+</html>

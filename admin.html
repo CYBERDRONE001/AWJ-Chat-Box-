@@ -1,0 +1,82 @@
+<!DOCTYPE html><html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel | AWJ ChatBox</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-black text-white font-sans">
+  <div class="p-4 bg-gray-900 border-b border-gray-800 text-center">
+    <h1 class="text-xl font-bold">Admin Dashboard 🛠️</h1>
+    <p class="text-sm text-gray-400">Moderate users, view reports and feedbacks</p>
+  </div>  <main class="p-4 space-y-6">
+    <div id="userList" class="bg-gray-800 p-4 rounded-xl">
+      <h2 class="font-semibold mb-2">Premium Users</h2>
+      <div id="usersContainer" class="space-y-2 text-sm"></div>
+    </div><div class="bg-gray-800 p-4 rounded-xl">
+  <h2 class="font-semibold mb-2">Reports</h2>
+  <div id="reportsContainer" class="space-y-2 text-sm"></div>
+</div>
+
+<div class="bg-gray-800 p-4 rounded-xl">
+  <h2 class="font-semibold mb-2">Reviews</h2>
+  <div id="reviewsContainer" class="space-y-2 text-sm"></div>
+</div>
+
+  </main>  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCNeOEkslQ6F4DAdd3usVbhDBCbkEDwexg",
+      authDomain: "awj-chat-box.firebaseapp.com",
+      projectId: "awj-chat-box",
+      storageBucket: "awj-chat-box.appspot.com",
+      messagingSenderId: "613683528897",
+      appId: "1:613683528897:web:3585629325f88de6184040",
+      measurementId: "G-VZS2YMNJ0M"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    auth.onAuthStateChanged(user => {
+      if (!user || user.email !== 'admin@example.com') {
+        alert("Access denied. Admins only.");
+        window.location.href = "login.html";
+      } else {
+        loadData();
+      }
+    });
+
+    function loadData() {
+      // Premium Users
+      db.collection("premiumUsers").get().then(snapshot => {
+        const container = document.getElementById("usersContainer");
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          container.innerHTML += `<div class='border-b border-gray-700 pb-1'>👤 <b>${d.name || 'User'}</b> - ${d.email}<br/><span class='text-gray-400 text-xs'>Upgraded: ${d.upgradedAt?.toDate().toLocaleString()}</span></div>`;
+        });
+      });
+
+      // Reports
+      db.collection("reports").orderBy("timestamp", "desc").get().then(snapshot => {
+        const container = document.getElementById("reportsContainer");
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          container.innerHTML += `<div class='border-b border-gray-700 pb-1'>🚨 <b>${d.email}</b><br/>${d.message}<br/><span class='text-gray-400 text-xs'>${d.timestamp?.toDate().toLocaleString()}</span></div>`;
+        });
+      });
+
+      // Reviews
+      db.collection("reviews").orderBy("timestamp", "desc").get().then(snapshot => {
+        const container = document.getElementById("reviewsContainer");
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          container.innerHTML += `<div class='border-b border-gray-700 pb-1'>⭐ <b>${d.name}</b>: ${d.review}<br/><span class='text-gray-400 text-xs'>${d.timestamp?.toDate().toLocaleString()}</span></div>`;
+        });
+      });
+    }
+  </script></body>
+</html>

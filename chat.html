@@ -1,0 +1,87 @@
+<!DOCTYPE html><html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AWJ ChatBox - Chat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-black text-white font-sans">
+  <header class="flex items-center justify-between p-4 bg-gray-900 border-b border-gray-800">
+    <h1 class="text-lg font-bold">💬 AWJ Chat</h1>
+    <div>
+      <button onclick="signOut()" class="text-red-400 hover:text-red-300">Logout</button>
+    </div>
+  </header>  <main class="p-4 space-y-2 max-w-xl mx-auto">
+    <div id="chatBox" class="space-y-2 h-[65vh] overflow-y-scroll bg-gray-900 p-4 rounded border border-gray-700"></div><form id="chatForm" class="flex gap-2">
+  <input type="text" id="messageInput" placeholder="Type your message..." class="flex-1 p-2 bg-gray-800 border border-gray-700 rounded" />
+  <button type="submit" class="bg-blue-600 px-4 rounded hover:bg-blue-700">Send</button>
+</form>
+
+  </main>  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCNeOEkslQ6F4DAdd3usVbhDBCbkEDwexg",
+      authDomain: "awj-chat-box.firebaseapp.com",
+      projectId: "awj-chat-box",
+      storageBucket: "awj-chat-box.appspot.com",
+      messagingSenderId: "613683528897",
+      appId: "1:613683528897:web:3585629325f88de6184040",
+      measurementId: "G-VZS2YMNJ0M"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const chatBox = document.getElementById("chatBox");
+    const chatForm = document.getElementById("chatForm");
+    const messageInput = document.getElementById("messageInput");
+
+    let currentUser;
+
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = "login.html";
+      } else {
+        currentUser = user;
+        listenForMessages();
+      }
+    });
+
+    chatForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const message = messageInput.value.trim();
+      if (message === "") return;
+
+      await db.collection("messages").add({
+        text: message,
+        uid: currentUser.uid,
+        email: currentUser.email,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      messageInput.value = "";
+    };
+
+    function listenForMessages() {
+      db.collection("messages").orderBy("timestamp")
+        .onSnapshot(snapshot => {
+          chatBox.innerHTML = "";
+          snapshot.forEach(doc => {
+            const msg = doc.data();
+            const isUser = msg.uid === currentUser.uid;
+            const div = document.createElement("div");
+            div.className = `p-2 rounded max-w-[70%] ${isUser ? 'bg-blue-600 ml-auto text-right' : 'bg-gray-700 text-left'}`;
+            div.innerHTML = `<small class='block text-xs text-gray-300'>${msg.email}</small>${msg.text}`;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+          });
+        });
+    }
+
+    function signOut() {
+      auth.signOut().then(() => window.location.href = "login.html");
+    }
+  </script></body>
+</html>

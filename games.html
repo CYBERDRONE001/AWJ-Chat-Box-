@@ -1,0 +1,67 @@
+<!DOCTYPE html><html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Games | AWJ ChatBox</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-black text-white font-sans">
+  <header class="flex justify-between items-center p-4 bg-gray-900 border-b border-gray-800">
+    <h1 class="text-lg font-bold">🎮 AWJ Games</h1>
+    <a href="home.html" class="text-blue-400">⬅️ Home</a>
+  </header>  <main class="p-4 grid grid-cols-2 md:grid-cols-3 gap-4">
+    <script>
+      const games = [
+        { name: "Mines", img: "https://img.icons8.com/emoji/48/mines.png" },
+        { name: "Ludo", img: "https://img.icons8.com/color/48/ludo.png" },
+        { name: "Tennis", img: "https://img.icons8.com/color/48/tennis.png" },
+        { name: "Rock Paper Scissors", img: "https://img.icons8.com/emoji/48/raised-fist.png" },
+        { name: "Aviator", img: "https://img.icons8.com/color/48/paper-plane.png" },
+        { name: "Whots", img: "https://img.icons8.com/color/48/cards.png" },
+        { name: "Cheese", img: "https://img.icons8.com/emoji/48/cheese-wedge.png" },
+        { name: "Q&A", img: "https://img.icons8.com/color/48/quiz.png" }
+      ];
+    </script><div id="gameGrid" class="col-span-full grid grid-cols-2 sm:grid-cols-3 gap-4"></div>
+
+  </main>  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCNeOEkslQ6F4DAdd3usVbhDBCbkEDwexg",
+      authDomain: "awj-chat-box.firebaseapp.com",
+      projectId: "awj-chat-box",
+      storageBucket: "awj-chat-box.appspot.com",
+      messagingSenderId: "613683528897",
+      appId: "1:613683528897:web:3585629325f88de6184040",
+      measurementId: "G-VZS2YMNJ0M"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = "login.html";
+      }
+    });
+
+    const gameGrid = document.getElementById("gameGrid");
+
+    games.forEach(game => {
+      const div = document.createElement("div");
+      div.className = "bg-gray-800 rounded-lg p-3 flex flex-col items-center hover:bg-gray-700 transition";
+      div.innerHTML = `
+        <img src="${game.img}" alt="${game.name}" class="w-16 h-16 mb-2">
+        <span class="text-sm font-bold mb-2">${game.name}</span>
+        <button onclick="playGame('${game.name}')" class="text-sm bg-blue-600 px-3 py-1 rounded hover:bg-blue-700">Play</button>
+      `;
+      gameGrid.appendChild(div);
+    });
+
+    function playGame(name) {
+      alert(`Launching ${name}... (coming soon)`);
+      // Future: window.location.href = `${name.toLowerCase().replace(/\s+/g, '')}.html`;
+    }
+  </script></body>
+</html>

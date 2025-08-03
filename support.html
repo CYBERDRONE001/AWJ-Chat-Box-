@@ -1,0 +1,97 @@
+<!DOCTYPE html><html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWJ ChatBox - Support</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCNeOEkslQ6F4DAdd3usVbhDBCbkEDwexg",
+      authDomain: "awj-chat-box.firebaseapp.com",
+      projectId: "awj-chat-box",
+      storageBucket: "awj-chat-box.firebasestorage.app",
+      messagingSenderId: "613683528897",
+      appId: "1:613683528897:web:3585629325f88de6184040",
+      measurementId: "G-VZS2YMNJ0M"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();auth.onAuthStateChanged(async (user) => {
+  if (!user) return;
+  const doc = await db.collection("users").doc(user.uid).get();
+  const isPremium = doc.exists && doc.data().premium;
+  if (!isPremium) showAds();
+});
+
+function showAds() {
+  const adBanner = document.createElement("div");
+  adBanner.innerHTML = `
+    <div class="fixed bottom-0 w-full bg-yellow-500 text-black text-center py-2 z-50">
+      🚨 Upgrade to Premium to remove ads! This is a sample ad banner.
+    </div>
+  `;
+  document.body.appendChild(adBanner);
+}
+
+  </script>
+</head>
+<body class="bg-black text-white font-sans">
+  <header class="p-4 bg-gray-900 border-b border-gray-800 flex justify-between items-center">
+    <h1 class="text-lg font-bold">🔧 Support & Feedback</h1>
+    <a href="index.html" class="text-blue-400 text-sm">← Back</a>
+  </header>  <main class="p-4 space-y-6">
+    <!-- Contact Support -->
+    <section>
+      <h2 class="text-xl font-semibold mb-2">📞 Contact Support</h2>
+      <form id="supportForm" class="space-y-2">
+        <input type="email" id="supportEmail" placeholder="Your email" class="w-full p-2 bg-gray-800 border border-gray-700 rounded">
+        <textarea id="supportMessage" placeholder="Describe your issue..." class="w-full p-2 bg-gray-800 border border-gray-700 rounded" rows="4"></textarea>
+        <button type="submit" class="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700">Send Message</button>
+      </form>
+    </section><!-- Report a Problem -->
+<section>
+  <h2 class="text-xl font-semibold mb-2">🐞 Report a Problem</h2>
+  <form id="bugForm" class="space-y-2">
+    <textarea id="bugText" placeholder="What went wrong?" class="w-full p-2 bg-gray-800 border border-gray-700 rounded" rows="3"></textarea>
+    <button type="submit" class="bg-red-600 px-4 py-2 rounded hover:bg-red-700">Report Bug</button>
+  </form>
+</section>
+
+<!-- Leave a Review -->
+<section>
+  <h2 class="text-xl font-semibold mb-2">⭐ Leave a Review</h2>
+  <form id="reviewForm" class="space-y-2">
+    <input type="text" id="reviewName" placeholder="Your name" class="w-full p-2 bg-gray-800 border border-gray-700 rounded">
+    <textarea id="reviewText" placeholder="Write your feedback..." class="w-full p-2 bg-gray-800 border border-gray-700 rounded" rows="3"></textarea>
+    <button type="submit" class="bg-green-600 px-4 py-2 rounded hover:bg-green-700">Submit Review</button>
+  </form>
+</section>
+
+<!-- Follow the Creator -->
+<section>
+  <h2 class="text-xl font-semibold mb-2">📱 Follow the Creator</h2>
+  <div class="flex gap-4">
+    <a href="https://wa.me/2348133481037" target="_blank" class="text-green-400">WhatsApp</a>
+    <a href="https://facebook.com/yourpage" target="_blank" class="text-blue-500">Facebook</a>
+    <a href="https://x.com/yourhandle" target="_blank" class="text-gray-300">X (Twitter)</a>
+  </div>
+</section>
+
+  </main>  <script>
+    document.getElementById("supportForm").onsubmit = function(e) {
+      e.preventDefault();
+      alert("Support message sent ✅");
+    };
+    document.getElementById("bugForm").onsubmit = function(e) {
+      e.preventDefault();
+      alert("Bug reported 🐞");
+    };
+    document.getElementById("reviewForm").onsubmit = function(e) {
+      e.preventDefault();
+      alert("Thanks for your review! ⭐");
+    };
+  </script></body>
+</html>
