@@ -1,18 +1,63 @@
-<!-- login.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>AWJ ChatBox - Login</title>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AWJ Chat Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Chirp&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: 'Chirp', sans-serif, system-ui;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    h1 {
+      color: #1DA1F2;
+      margin-bottom: 30px;
+    }
+
+    button {
+      background-color: #1DA1F2;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 10px;
+      color: #fff;
+    }
+
+    button:hover {
+      background-color: #0d8ddb;
+    }
+
+    .error {
+      margin-top: 15px;
+      color: red;
+    }
+  </style>
 </head>
-<body style="background:#000;color:#fff;text-align:center;padding:50px;font-family:Arial;">
-  <h1>AWJ ChatBox</h1>
-  <p>Login with Google to continue</p>
+<body>
+
+  <h1>AWJ Chatbox 💬</h1>
+
   <button onclick="loginWithGoogle()">Login with Google</button>
+  <button onclick="redirectToWhatsApp()">Login via WhatsApp</button>
+
+  <div class="error" id="errorMessage"></div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
   <script>
+    // Your Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyCNeOEkslQ6F4DAdd3usVbhDBCbkEDwexg",
       authDomain: "awj-chat-box.firebaseapp.com",
@@ -23,19 +68,35 @@
       measurementId: "G-VZS2YMNJ0M"
     };
 
+    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const provider = new firebase.auth.GoogleAuthProvider();
 
+    // Login with redirect (mobile friendly)
     function loginWithGoogle() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      firebase.auth().signInWithPopup(provider)
-        .then((result) => {
-          console.log("Logged in:", result.user.email);
-          window.location.href = "chat.html"; // ✅ redirect here
-        })
-        .catch((error) => {
-          console.error("Login Error:", error.message);
-          alert("Login failed. Try again.");
-        });
+      auth.signInWithRedirect(provider);
+    }
+
+    // Handle redirect result
+    auth.getRedirectResult()
+      .then((result) => {
+        if (result.user) {
+          // Redirect to chat page
+          window.location.href = "chat.html";
+        }
+      })
+      .catch((error) => {
+        console.error("Redirect error:", error.message);
+        document.getElementById("errorMessage").textContent = "Login Error: " + error.message;
+      });
+
+    // WhatsApp "login" redirect (placeholder)
+    function redirectToWhatsApp() {
+      const message = encodeURIComponent("Hello, I want to connect my WhatsApp to AWJ Chatbox.");
+      const phone = "2348123456789"; // Replace with your number (no "+" sign)
+      const url = `https://wa.me/${phone}?text=${message}`;
+      window.location.href = url;
     }
   </script>
 </body>
