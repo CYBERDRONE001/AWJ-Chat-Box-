@@ -3,61 +3,76 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AWJ Chat Login</title>
-  <link href="https://fonts.googleapis.com/css2?family=Chirp&display=swap" rel="stylesheet">
+  <title>AWJ Chatbox - Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
   <style>
     body {
-      background-color: #000;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #0d0d0d;
       color: #fff;
-      font-family: 'Chirp', sans-serif, system-ui;
       display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
-
+    .container {
+      text-align: center;
+      padding: 2rem;
+      border-radius: 20px;
+      background: #1a1a1a;
+      box-shadow: 0 0 12px rgba(0,0,0,0.4);
+      max-width: 400px;
+    }
     h1 {
-      color: #1DA1F2;
-      margin-bottom: 30px;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
     }
-
-    button {
-      background-color: #1DA1F2;
+    p.description {
+      color: #ccc;
+      margin-bottom: 2rem;
+    }
+    .login-btn {
+      width: 100%;
+      margin: 10px 0;
+      padding: 12px;
       border: none;
-      padding: 15px 30px;
-      border-radius: 25px;
+      border-radius: 8px;
       font-size: 16px;
+      font-weight: 600;
       cursor: pointer;
-      margin: 10px;
+      transition: background 0.3s ease;
+    }
+    .google {
+      background-color: #fff;
+      color: #000;
+    }
+    .facebook {
+      background-color: #1877f2;
       color: #fff;
     }
-
-    button:hover {
-      background-color: #0d8ddb;
-    }
-
-    .error {
-      margin-top: 15px;
-      color: red;
+    .login-btn:hover {
+      opacity: 0.9;
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h1>AWJ Chatbox</h1>
+    <p class="description">
+      Chat with friends, play games like Ludo and Aviator, unlock premium features, enjoy dark mode — all in one place!
+    </p>
+    <button class="login-btn google" onclick="loginWithGoogle()">Login with Google</button>
+    <button class="login-btn facebook" onclick="loginWithFacebook()">Login with Facebook</button>
+  </div>
 
-  <h1>AWJ Chatbox 💬</h1>
+  <script type="module">
+    // Firebase imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, FacebookAuthProvider, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  <button onclick="loginWithGoogle()">Login with Google</button>
-  <button onclick="redirectToWhatsApp()">Login via WhatsApp</button>
-
-  <div class="error" id="errorMessage"></div>
-
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-
-  <script>
-    // Your Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyCNeOEkslQ6F4DAdd3usVbhDBCbkEDwexg",
       authDomain: "awj-chat-box.firebaseapp.com",
@@ -68,36 +83,29 @@
       measurementId: "G-VZS2YMNJ0M"
     };
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const provider = new firebase.auth.GoogleAuthProvider();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-    // Login with redirect (mobile friendly)
-    function loginWithGoogle() {
-      auth.signInWithRedirect(provider);
-    }
+    const googleProvider = new GoogleAuthProvider();
+    const facebookProvider = new FacebookAuthProvider();
 
-    // Handle redirect result
-    auth.getRedirectResult()
+    window.loginWithGoogle = () => {
+      signInWithRedirect(auth, googleProvider);
+    };
+
+    window.loginWithFacebook = () => {
+      signInWithRedirect(auth, facebookProvider);
+    };
+
+    getRedirectResult(auth)
       .then((result) => {
         if (result.user) {
-          // Redirect to chat page
-          window.location.href = "chat.html";
+          window.location.href = "chat.html"; // redirect after login
         }
       })
       .catch((error) => {
         console.error("Redirect error:", error.message);
-        document.getElementById("errorMessage").textContent = "Login Error: " + error.message;
       });
-
-    // WhatsApp "login" redirect (placeholder)
-    function redirectToWhatsApp() {
-      const message = encodeURIComponent("Hello, I want to connect my WhatsApp to AWJ Chatbox.");
-      const phone = "2348123456789"; // Replace with your number (no "+" sign)
-      const url = `https://wa.me/${phone}?text=${message}`;
-      window.location.href = url;
-    }
   </script>
 </body>
 </html>
